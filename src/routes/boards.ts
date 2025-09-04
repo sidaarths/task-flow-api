@@ -188,6 +188,13 @@ router.delete('/:boardId/members/:userId', authMiddleware, async (req: Request, 
     }
 
     const memberId = new mongoose.Types.ObjectId(req.params.userId);
+    
+    // Prevent removing the creator from board members
+    if (memberId.toString() === board.createdBy.toString()) {
+      console.log(`[DELETE /boards/:boardId/members/:userId] Cannot remove creator from board ${board._id}`);
+      return res.status(400).json({ message: 'Cannot remove creator from board' });
+    }
+
     const memberIndex = board.members.findIndex(m => m.toString() === memberId.toString());
     
     if (memberIndex === -1) {
