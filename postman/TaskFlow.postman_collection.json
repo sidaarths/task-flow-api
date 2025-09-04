@@ -48,12 +48,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3001/api/auth/login",
-							"protocol": "http",
+							"raw": "{{domain}}/api/auth/login",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"auth",
@@ -95,12 +93,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/boards",
-							"protocol": "http",
+							"raw": "{{domain}}/api/boards",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"boards"
@@ -141,12 +137,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/boards/:boardId/lists",
-							"protocol": "http",
+							"raw": "{{domain}}/api/boards/:boardId/lists",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"boards",
@@ -195,12 +189,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/lists/:listId/tasks",
-							"protocol": "http",
+							"raw": "{{domain}}/api/lists/:listId/tasks",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"lists",
@@ -240,12 +232,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3001/api/users/search?q=s",
-							"protocol": "http",
+							"raw": "{{domain}}/api/users/search?q=s",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"users",
@@ -285,12 +275,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3001/api/auth/register",
-							"protocol": "http",
+							"raw": "{{domain}}/api/auth/register",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"auth",
@@ -320,12 +308,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3001/api/auth/login",
-							"protocol": "http",
+							"raw": "{{domain}}/api/auth/login",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"auth",
@@ -398,12 +384,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3001/api/users/me",
-							"protocol": "http",
+							"raw": "{{domain}}/api/users/me",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"users",
@@ -434,12 +418,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3001/api/users/search?q=e",
-							"protocol": "http",
+							"raw": "{{domain}}/api/users/search?q=e",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"users",
@@ -491,12 +473,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/boards",
-							"protocol": "http",
+							"raw": "{{domain}}/api/boards",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"boards"
@@ -526,12 +506,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3001/api/boards",
-							"protocol": "http",
+							"raw": "{{domain}}/api/boards",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"boards"
@@ -561,12 +539,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3001/api/boards/:boardId",
-							"protocol": "http",
+							"raw": "{{domain}}/api/boards/:boardId",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"boards",
@@ -612,12 +588,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/boards/:boardId/members",
-							"protocol": "http",
+							"raw": "{{domain}}/api/boards/:boardId/members",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"boards",
@@ -664,12 +638,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/boards/:boardId/members/:memberId",
-							"protocol": "http",
+							"raw": "{{domain}}/api/boards/:boardId/members/:memberId",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"boards",
@@ -721,12 +693,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/boards/:boardId",
-							"protocol": "http",
+							"raw": "{{domain}}/api/boards/:boardId",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"boards",
@@ -763,12 +733,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3001/api/boards/:boardId",
-							"protocol": "http",
+							"raw": "{{domain}}/api/boards/:boardId",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"boards",
@@ -816,12 +784,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/boards/:boardId/lists",
-							"protocol": "http",
+							"raw": "{{domain}}/api/boards/:boardId/lists",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"boards",
@@ -864,12 +830,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3001/api/lists/:listId",
-							"protocol": "http",
+							"raw": "{{domain}}/api/lists/:listId",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"lists",
@@ -915,12 +879,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/lists/:listId",
-							"protocol": "http",
+							"raw": "{{domain}}/api/lists/:listId",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"lists",
@@ -966,12 +928,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/lists/:listId/position",
-							"protocol": "http",
+							"raw": "{{domain}}/api/lists/:listId/position",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"lists",
@@ -1009,12 +969,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3001/api/lists/:listId/tasks",
-							"protocol": "http",
+							"raw": "{{domain}}/api/lists/:listId/tasks",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"lists",
@@ -1063,12 +1021,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/lists/:listId/tasks",
-							"protocol": "http",
+							"raw": "{{domain}}/api/lists/:listId/tasks",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"lists",
@@ -1111,12 +1067,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3001/api/tasks/:taskId",
-							"protocol": "http",
+							"raw": "{{domain}}/api/tasks/:taskId",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"tasks",
@@ -1153,12 +1107,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3001/api/tasks/:taskId",
-							"protocol": "http",
+							"raw": "{{domain}}/api/tasks/:taskId",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"tasks",
@@ -1204,12 +1156,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/tasks/:taskId",
-							"protocol": "http",
+							"raw": "{{domain}}/api/tasks/:taskId",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"tasks",
@@ -1255,12 +1205,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/tasks/:taskId/position",
-							"protocol": "http",
+							"raw": "{{domain}}/api/tasks/:taskId/position",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"tasks",
@@ -1305,12 +1253,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3001/api/boards/:boardId",
-							"protocol": "http",
+							"raw": "{{domain}}/api/boards/:boardId",
 							"host": [
-								"localhost"
+								"{{domain}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"boards",
