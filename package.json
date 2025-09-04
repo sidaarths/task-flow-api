@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Sidaarth Santhosh <sidaarthsanthosh@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "@types/bcrypt": "^6.0.0",
