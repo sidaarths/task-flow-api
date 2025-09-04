@@ -1,4 +1,5 @@
 import { Router, Request } from 'express';
+import mongoose from 'mongoose';
 import { User } from '../models/User';
 import { authMiddleware } from '../middleware/auth';
 
@@ -22,7 +23,11 @@ router.get('/me', authMiddleware, async (req: Request, res) => {
     res.json(user);
   } catch (error) {
     console.error('[GET /users/me] Error fetching user profile:', error);
-    res.status(500).json({ message: 'Error fetching user profile', error });
+    if (error instanceof mongoose.Error.ValidationError) {
+      res.status(400).json({ message: 'Invalid user data' });
+    } else {
+      res.status(500).json({ message: 'Error fetching user profile' });
+    }
   }
 });
 
@@ -44,7 +49,11 @@ router.get('/search', authMiddleware, async (req: Request, res) => {
     res.json(users);
   } catch (error) {
     console.error('[GET /users/search] Error searching users:', error);
-    res.status(500).json({ message: 'Error searching users', error });
+    if (error instanceof mongoose.Error.ValidationError) {
+      res.status(400).json({ message: 'Invalid search parameters' });
+    } else {
+      res.status(500).json({ message: 'Error searching users' });
+    }
   }
 });
 
