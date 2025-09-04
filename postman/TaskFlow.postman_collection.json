@@ -1,0 +1,1457 @@
+{
+	"info": {
+		"_postman_id": "4983e242-ce5e-441c-9359-4ab07ab12cff",
+		"name": "TaskFlow",
+		"description": "Welcome! This Collection is used to document and test TaskFlow API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48090832",
+		"_collection_link": "https://sidaarths-572275.postman.co/workspace/Sid's-Workspace~b3b01952-4c4b-4326-898c-b5ca0241c158/collection/48090832-4983e242-ce5e-441c-9359-4ab07ab12cff?action=share&source=collection_link&creator=48090832"
+	},
+	"item": [
+		{
+			"name": "Setup",
+			"item": [
+				{
+					"name": "Set Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"token\", pm.response.json().token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "example@email.com",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/auth/login",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Set Board Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"boardId\", pm.response.json()._id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"test board\",\r\n    \"description\": \"blah blah\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/boards",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"boards"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Set ListId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"listId\",  pm.response.json()._id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"test-list\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/boards/:boardId/lists",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"boards",
+								":boardId",
+								"lists"
+							],
+							"variable": [
+								{
+									"key": "boardId",
+									"value": "{{boardId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Set TaskId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"taskId\",  pm.response.json()._id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"test-task\",\r\n    \"description\": \"blah blah\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/lists/:listId/tasks",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"lists",
+								":listId",
+								"tasks"
+							],
+							"variable": [
+								{
+									"key": "listId",
+									"value": "{{listId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Set UserId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"userId\", pm.response.json()[0]._id)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/users/search?q=s",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "s"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Set MemberId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"memberId\", pm.response.json()._id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/users/me",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"me"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/auth",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/auth/register",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/auth/login",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "basic",
+				"basic": [
+					{
+						"key": "password",
+						"value": "password",
+						"type": "string"
+					},
+					{
+						"key": "username",
+						"value": "example@email.com",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "/users",
+			"item": [
+				{
+					"name": "Me",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/users/me",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"me"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Search",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/users/search?q=e",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "e"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/boards",
+			"item": [
+				{
+					"name": "Create Board 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.collectionVariables.set(\"boardId2\", pm.response.json()._id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"test board\",\r\n    \"description\": \"blah blah\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/boards",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"boards"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Boards for User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/boards",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"boards"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Board 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/boards/:boardId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"boards",
+								":boardId"
+							],
+							"variable": [
+								{
+									"key": "boardId",
+									"value": "{{boardId2}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Member to Board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"{{userId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/boards/:boardId/members",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"boards",
+								":boardId",
+								"members"
+							],
+							"variable": [
+								{
+									"key": "boardId",
+									"value": "{{boardId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Member from Board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/boards/:boardId/members/:memberId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"boards",
+								":boardId",
+								"members",
+								":memberId"
+							],
+							"variable": [
+								{
+									"key": "boardId",
+									"value": "{{boardId}}"
+								},
+								{
+									"key": "memberId",
+									"value": "{{userId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"test board update\",\r\n    \"description\": \"blah blah 1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/boards/:boardId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"boards",
+								":boardId"
+							],
+							"variable": [
+								{
+									"key": "boardId",
+									"value": "{{boardId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Board Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/boards/:boardId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"boards",
+								":boardId"
+							],
+							"variable": [
+								{
+									"key": "boardId",
+									"value": "{{boardId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Create List 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"listId2\", pm.response.json()._id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"test-list\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/boards/:boardId/lists",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"boards",
+								":boardId",
+								"lists"
+							],
+							"variable": [
+								{
+									"key": "boardId",
+									"value": "{{boardId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/lists",
+			"item": [
+				{
+					"name": "Delete List 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/lists/:listId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"lists",
+								":listId"
+							],
+							"variable": [
+								{
+									"key": "listId",
+									"value": "{{listId2}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Update List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"test-update\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/lists/:listId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"lists",
+								":listId"
+							],
+							"variable": [
+								{
+									"key": "listId",
+									"value": "{{listId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Update List Position",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"position\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/lists/:listId/position",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"lists",
+								":listId",
+								"position"
+							],
+							"variable": [
+								{
+									"key": "listId",
+									"value": "{{listId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Tasks in List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/lists/:listId/tasks",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"lists",
+								":listId",
+								"tasks"
+							],
+							"variable": [
+								{
+									"key": "listId",
+									"value": "{{listId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Task 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"taskId2\",  pm.response.json()._id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"test-task\",\r\n    \"description\": \"blah blah\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/lists/:listId/tasks",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"lists",
+								":listId",
+								"tasks"
+							],
+							"variable": [
+								{
+									"key": "listId",
+									"value": "{{listId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/tasks/",
+			"item": [
+				{
+					"name": "Delete Task 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/tasks/:taskId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"tasks",
+								":taskId"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "{{taskId2}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Task Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/tasks/:taskId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"tasks",
+								":taskId"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "{{taskId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"test-task-update\",\r\n    \"description\": \"blah no blah\",\r\n    \"labels\": [\"label-test\"],\r\n    \"dueDate\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/tasks/:taskId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"tasks",
+								":taskId"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "{{taskId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Task Position",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"position\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/tasks/:taskId/position",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"tasks",
+								":taskId",
+								"position"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "{{taskId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Assign Member to Task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"position\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/tasks/:taskId/member/:memberId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"tasks",
+								":taskId",
+								"member",
+								":memberId"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "{{taskId}}"
+								},
+								{
+									"key": "memberId",
+									"value": "{{memberId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Unassign Member to Task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"position\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/tasks/:taskId/member/:memberId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"tasks",
+								":taskId",
+								"member",
+								":memberId"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "{{taskId}}"
+								},
+								{
+									"key": "memberId",
+									"value": "{{memberId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cleanup",
+			"item": [
+				{
+					"name": "Delete Board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.collectionVariables.clear();"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/boards/:boardId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"boards",
+								":boardId"
+							],
+							"variable": [
+								{
+									"key": "boardId",
+									"value": "{{boardId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
