@@ -4,42 +4,49 @@ import { List, IList } from '../models/List';
 import { Task } from '../models/Task';
 import { Board, IBoard } from '../models/Board';
 import mongoose from 'mongoose';
+import logger from '../utils/logger';
 
 const router = express.Router({ mergeParams: true });
 
 // Update list
 router.put('/:listId', authMiddleware, async (req: Request, res: Response) => {
   try {
-    console.log(`[PUT /lists/:listId] Updating list ${req.params.listId}`);
+    logger.info(`[PUT /lists/:listId] Updating list ${req.params.listId}`);
     const list = await List.findById(req.params.listId);
     if (!list) {
-      console.log(`[PUT /lists/:listId] List ${req.params.listId} not found`);
+      logger.warn(`[PUT /lists/:listId] List ${req.params.listId} not found`);
       return res.status(404).json({ message: 'List not found' });
     }
 
     const board = await Board.findById(list.boardId);
     if (!board) {
-      console.log(`[PUT /lists/:listId] Board ${list.boardId} not found for list ${list._id}`);
+      logger.warn(`[PUT /lists/:listId] Board ${list.boardId} not found for list ${list._id}`);
       return res.status(404).json({ message: 'Board not found' });
     }
 
     // Check if user has access to board
     const userId = req.user?.userId;
     if (!userId || (!board.members.includes(userId) && board.createdBy.toString() !== userId.toString())) {
-      console.log(`[PUT /lists/:listId] Access denied for user ${userId} to update list ${list._id}`);
+      logger.warn(`[PUT /lists/:listId] Access denied for user ${userId} to update list ${list._id}`);
       return res.status(403).json({ message: 'Access denied' });
+    }
+
+    // Remove protected fields from the update
+    const { position, ...updateData } = req.body;
+    if (position !== undefined) {
+      logger.warn(`[PUT /lists/:listId] Ignored position field - use /position endpoint instead`);
     }
 
     const updatedList = await List.findByIdAndUpdate(
       req.params.listId,
-      { $set: req.body },
+      { $set: updateData },
       { new: true }
     );
-    console.log(`[PUT /lists/:listId] Successfully updated list ${updatedList?._id}`);
+    logger.info(`[PUT /lists/:listId] Successfully updated list ${updatedList?._id}`);
     res.json(updatedList);
     
   } catch (error) {
-    console.error(`[PUT /lists/:listId] Error updating list:`, error);
+    logger.error(`[PUT /lists/:listId] Error updating list:`, error);
     if (error instanceof mongoose.Error.ValidationError) {
         res.status(400).json({ message: 'Invalid list data' });
     } else {
@@ -51,23 +58,23 @@ router.put('/:listId', authMiddleware, async (req: Request, res: Response) => {
 // Delete list
 router.delete('/:listId', authMiddleware, async (req: Request, res: Response) => {
   try {
-    console.log(`[DELETE /lists/:listId] Deleting list ${req.params.listId}`);
+    logger.info(`[DELETE /lists/:listId] Deleting list ${req.params.listId}`);
     const list = await List.findById(req.params.listId);
     if (!list) {
-      console.log(`[DELETE /lists/:listId] List ${req.params.listId} not found`);
+      logger.warn(`[DELETE /lists/:listId] List ${req.params.listId} not found`);
       return res.status(404).json({ message: 'List not found' });
     }
 
     const board = await Board.findById(list.boardId);
     if (!board) {
-      console.log(`[DELETE /lists/:listId] Board ${list.boardId} not found for list ${list._id}`);
+      logger.warn(`[DELETE /lists/:listId] Board ${list.boardId} not found for list ${list._id}`);
       return res.status(404).json({ message: 'Board not found' });
     }
 
     // Check if user has access to board
     const userId = req.user?.userId;
     if (!userId || (!board.members.includes(userId) && board.createdBy.toString() !== userId.toString())) {
-      console.log(`[DELETE /lists/:listId] Access denied for user ${userId} to delete list ${list._id}`);
+      logger.warn(`[DELETE /lists/:listId] Access denied for user ${userId} to delete list ${list._id}`);
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -75,10 +82,10 @@ router.delete('/:listId', authMiddleware, async (req: Request, res: Response) =>
     const deletedTasks = await Task.deleteMany({ listId: list._id });
     await list.deleteOne();
 
-    console.log(`[DELETE /lists/:listId] Successfully deleted list ${list._id} and ${deletedTasks.deletedCount} tasks`);
+    logger.info(`[DELETE /lists/:listId] Successfully deleted list ${list._id} and ${deletedTasks.deletedCount} tasks`);
     res.json({ message: 'List deleted successfully' });
   } catch (error) {
-    console.error(`[DELETE /lists/:listId] Error deleting list:`, error);
+    logger.error(`[DELETE /lists/:listId] Error deleting list:`, error);
     res.status(500).json({ message: 'Error deleting list' });
   }
 });
@@ -86,28 +93,28 @@ router.delete('/:listId', authMiddleware, async (req: Request, res: Response) =>
 // Update list position
 router.put('/:listId/position', authMiddleware, async (req: Request, res: Response) => {
   try {
-    console.log(`[PUT /lists/:listId/position] Updating position for list ${req.params.listId} to ${req.body.position}`);
+    logger.info(`[PUT /lists/:listId/position] Updating position for list ${req.params.listId} to ${req.body.position}`);
     const { position } = req.body;
     if (typeof position !== 'number') {
-      console.log(`[PUT /lists/:listId/position] Invalid position value provided: ${position}`);
+      logger.warn(`[PUT /lists/:listId/position] Invalid position value provided: ${position}`);
       return res.status(400).json({ message: 'Invalid position value' });
     }
 
     const list = await List.findById(req.params.listId) as IList;
     if (!list) {
-      console.log(`[PUT /lists/:listId/position] List ${req.params.listId} not found`);
+      logger.warn(`[PUT /lists/:listId/position] List ${req.params.listId} not found`);
       return res.status(404).json({ message: 'List not found' });
     }
 
     const board = await Board.findById(list.boardId) as IBoard;
     if (!board) {
-      console.log(`[PUT /lists/:listId/position] Board ${list.boardId} not found for list ${list._id}`);
+      logger.warn(`[PUT /lists/:listId/position] Board ${list.boardId} not found for list ${list._id}`);
       return res.status(404).json({ message: 'Board not found' });
     }
 
     // Check if user has access to board
     if (!board.members.includes(req.user!.userId) && board.createdBy.toString() !== req.user!.userId.toString()) {
-      console.log(`[PUT /lists/:listId/position] Access denied for user ${req.user!.userId} to update list position`);
+      logger.warn(`[PUT /lists/:listId/position] Access denied for user ${req.user!.userId} to update list position`);
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -123,7 +130,7 @@ router.put('/:listId/position', authMiddleware, async (req: Request, res: Respon
     // Clamp the position between 0 and the list length
     const clampedPosition = Math.max(0, Math.min(position, lists.length));
     if (clampedPosition !== position) {
-      console.log(`[PUT /lists/:listId/position] Clamped position from ${position} to ${clampedPosition}`);
+      logger.warn(`[PUT /lists/:listId/position] Clamped position from ${position} to ${clampedPosition}`);
     }
 
     // Insert the list at the new position
@@ -134,10 +141,10 @@ router.put('/:listId/position', authMiddleware, async (req: Request, res: Respon
       return List.findByIdAndUpdate(l._id, { position: index });
     }));
 
-    console.log(`[PUT /lists/:listId/position] Successfully updated position for list ${list._id} to ${position}`);
+    logger.info(`[PUT /lists/:listId/position] Successfully updated position for list ${list._id} to ${position}`);
     res.json({ message: 'List position updated successfully' });
   } catch (error) {
-    console.error(`[PUT /lists/:listId/position] Error updating list position:`, error);
+    logger.error(`[PUT /lists/:listId/position] Error updating list position:`, error);
     res.status(500).json({ message: 'Error updating list position' });
   }
 });
@@ -145,30 +152,30 @@ router.put('/:listId/position', authMiddleware, async (req: Request, res: Respon
 // Get all tasks in a list
 router.get('/:listId/tasks', authMiddleware, async (req: Request, res: Response) => {
   try {
-    console.log(`[GET /lists/:listId/tasks] Fetching tasks for list ${req.params.listId}`);
+    logger.info(`[GET /lists/:listId/tasks] Fetching tasks for list ${req.params.listId}`);
     const list = await List.findById(req.params.listId) as IList;
     if (!list) {
-      console.log(`[GET /lists/:listId/tasks] List ${req.params.listId} not found`);
+      logger.warn(`[GET /lists/:listId/tasks] List ${req.params.listId} not found`);
       return res.status(404).json({ message: 'List not found' });
     }
 
     const board = await Board.findById(list.boardId) as IBoard;
     if (!board) {
-      console.log(`[GET /lists/:listId/tasks] Board ${list.boardId} not found for list ${list._id}`);
+      logger.warn(`[GET /lists/:listId/tasks] Board ${list.boardId} not found for list ${list._id}`);
       return res.status(404).json({ message: 'Board not found' });
     }
 
     // Check if user has access to board
     if (!board.members.includes(req.user!.userId) && board.createdBy.toString() !== req.user!.userId.toString()) {
-      console.log(`[GET /lists/:listId/tasks] Access denied for user ${req.user!.userId} to view tasks in list ${list._id}`);
+      logger.warn(`[GET /lists/:listId/tasks] Access denied for user ${req.user!.userId} to view tasks in list ${list._id}`);
       return res.status(403).json({ message: 'Access denied' });
     }
 
     const tasks = await Task.find({ listId: list._id }).sort('position');
-    console.log(`[GET /lists/:listId/tasks] Successfully fetched ${tasks.length} tasks from list ${list._id}`);
+    logger.info(`[GET /lists/:listId/tasks] Successfully fetched ${tasks.length} tasks from list ${list._id}`);
     res.json(tasks);
   } catch (error) {
-    console.error(`[GET /lists/:listId/tasks] Error fetching tasks:`, error);
+    logger.error(`[GET /lists/:listId/tasks] Error fetching tasks:`, error);
     res.status(500).json({ message: 'Error fetching tasks' });
   }
 });
@@ -176,22 +183,22 @@ router.get('/:listId/tasks', authMiddleware, async (req: Request, res: Response)
 // Create new task
 router.post('/:listId/tasks', authMiddleware, async (req: Request, res: Response) => {
   try {
-    console.log(`[POST /lists/:listId/tasks] Creating new task in list ${req.params.listId}`);
+    logger.info(`[POST /lists/:listId/tasks] Creating new task in list ${req.params.listId}`);
     const list = await List.findById(req.params.listId) as IList;
     if (!list) {
-      console.log(`[POST /lists/:listId/tasks] List ${req.params.listId} not found`);
+      logger.warn(`[POST /lists/:listId/tasks] List ${req.params.listId} not found`);
       return res.status(404).json({ message: 'List not found' });
     }
 
     const board = await Board.findById(list.boardId) as IBoard;
     if (!board) {
-      console.log(`[POST /lists/:listId/tasks] Board ${list.boardId} not found for list ${list._id}`);
+      logger.warn(`[POST /lists/:listId/tasks] Board ${list.boardId} not found for list ${list._id}`);
       return res.status(404).json({ message: 'Board not found' });
     }
 
     // Check if user has access to board
     if (!board.members.includes(req.user!.userId) && board.createdBy.toString() !== req.user!.userId.toString()) {
-      console.log(`[POST /lists/:listId/tasks] Access denied for user ${req.user!.userId} to create task in list ${list._id}`);
+      logger.warn(`[POST /lists/:listId/tasks] Access denied for user ${req.user!.userId} to create task in list ${list._id}`);
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -206,10 +213,10 @@ router.post('/:listId/tasks', authMiddleware, async (req: Request, res: Response
     });
 
     await task.save();
-    console.log(`[POST /lists/:listId/tasks] Successfully created task ${task._id} in list ${list._id}`);
+    logger.info(`[POST /lists/:listId/tasks] Successfully created task ${task._id} in list ${list._id}`);
     res.status(201).json(task);
   } catch (error) {
-    console.error(`[POST /lists/:listId/tasks] Error creating task:`, error);
+    logger.error(`[POST /lists/:listId/tasks] Error creating task:`, error);
     if (error instanceof mongoose.Error.ValidationError) {
         res.status(400).json({ message: 'Invalid task data' });
     } else {

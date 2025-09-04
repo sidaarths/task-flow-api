@@ -1,6 +1,7 @@
 import { Router, Request } from 'express';
 import { User } from '../models/User';
 import jwt from 'jsonwebtoken';
+import logger from '../utils/logger';
 
 const router = Router();
 
@@ -24,11 +25,11 @@ const getCredentials = (req: Request): { email: string; password: string } | nul
 // User registration
 router.post('/register', async (req, res) => {
   try {
-    console.log('[POST /auth/register] Processing registration request');
+    logger.info('[POST /auth/register] Processing registration request');
     
     const credentials = getCredentials(req);
     if (!credentials) {
-      console.log('[POST /auth/register] Missing or invalid Basic Auth header');
+      logger.warn('[POST /auth/register] Missing or invalid Basic Auth header');
       return res.status(401).json({ 
         message: 'Missing or invalid Basic Auth header',
         hint: 'Use Basic Authentication with email:password encoded in base64'
@@ -40,7 +41,7 @@ router.post('/register', async (req, res) => {
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      console.log(`[POST /auth/register] User already exists with email ${email}`);
+      logger.warn(`[POST /auth/register] User already exists with email ${email}`);
       return res.status(400).json({ message: 'User already exists' });
     }
 
@@ -55,22 +56,22 @@ router.post('/register', async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    console.log(`[POST /auth/register] Successfully registered user ${user._id}`);
+    logger.info(`[POST /auth/register] Successfully registered user ${user._id}`);
     res.status(201).json({ token });
   } catch (error) {
-    console.error('[POST /auth/register] Error creating user:', error);
-    res.status(500).json({ message: 'Error creating user', error });
+    logger.error('[POST /auth/register] Error creating user:', error);
+    res.status(500).json({ message: 'Error creating user' });
   }
 });
 
 // User login
 router.post('/login', async (req, res) => {
   try {
-    console.log('[POST /auth/login] Processing login request');
+    logger.info('[POST /auth/login] Processing login request');
     
     const credentials = getCredentials(req);
     if (!credentials) {
-      console.log('[POST /auth/login] Missing or invalid Basic Auth header');
+      logger.warn('[POST /auth/login] Missing or invalid Basic Auth header');
       return res.status(401).json({ 
         message: 'Missing or invalid Basic Auth header',
         hint: 'Use Basic Authentication with email:password encoded in base64'
@@ -82,14 +83,14 @@ router.post('/login', async (req, res) => {
     // Find user
     const user = await User.findOne({ email });
     if (!user) {
-      console.log(`[POST /auth/login] No user found with email ${email}`);
+      logger.warn(`[POST /auth/login] No user found with email ${email}`);
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     // Check password
     const isValidPassword = await user.comparePassword(password);
     if (!isValidPassword) {
-      console.log(`[POST /auth/login] Invalid password for user ${user._id}`);
+      logger.warn(`[POST /auth/login] Invalid password for user ${user._id}`);
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
@@ -100,10 +101,10 @@ router.post('/login', async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    console.log(`[POST /auth/login] Successfully logged in user ${user._id}`);
+    logger.info(`[POST /auth/login] Successfully logged in user ${user._id}`);
     res.json({ token });
   } catch (error) {
-    console.error('[POST /auth/login] Error logging in:', error);
+    logger.error('[POST /auth/login] Error logging in:', error);
     res.status(500).json({ message: 'Error logging in', error });
   }
 });
