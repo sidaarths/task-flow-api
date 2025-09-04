@@ -120,8 +120,14 @@ router.put('/:listId/position', authMiddleware, async (req: Request, res: Respon
       lists.splice(currentIndex, 1);
     }
 
+    // Clamp the position between 0 and the list length
+    const clampedPosition = Math.max(0, Math.min(position, lists.length));
+    if (clampedPosition !== position) {
+      console.log(`[PUT /lists/:listId/position] Clamped position from ${position} to ${clampedPosition}`);
+    }
+
     // Insert the list at the new position
-    lists.splice(position, 0, list.toObject());
+    lists.splice(clampedPosition, 0, list.toObject());
 
     // Update positions
     await Promise.all(lists.map((l, index) => {
