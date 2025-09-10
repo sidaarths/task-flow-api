@@ -556,46 +556,6 @@
 					"response": []
 				},
 				{
-					"name": "Delete Board 2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{domain}}/api/boards/:boardId",
-							"host": [
-								"{{domain}}"
-							],
-							"path": [
-								"api",
-								"boards",
-								":boardId"
-							],
-							"variable": [
-								{
-									"key": "boardId",
-									"value": "{{boardId2}}"
-								}
-							]
-						},
-						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
-					},
-					"response": []
-				},
-				{
 					"name": "Add Member to Board",
 					"event": [
 						{
@@ -614,17 +574,8 @@
 					"request": {
 						"method": "POST",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"userId\": \"{{userId}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "{{domain}}/api/boards/:boardId/members",
+							"raw": "{{domain}}/api/boards/:boardId/users/:userId",
 							"host": [
 								"{{domain}}"
 							],
@@ -632,58 +583,8 @@
 								"api",
 								"boards",
 								":boardId",
-								"members"
-							],
-							"variable": [
-								{
-									"key": "boardId",
-									"value": "{{boardId}}"
-								}
-							]
-						},
-						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Member from Board",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{domain}}/api/boards/:boardId/members/:memberId",
-							"host": [
-								"{{domain}}"
-							],
-							"path": [
-								"api",
-								"boards",
-								":boardId",
-								"members",
-								":memberId"
+								"users",
+								":userId"
 							],
 							"variable": [
 								{
@@ -691,7 +592,7 @@
 									"value": "{{boardId}}"
 								},
 								{
-									"key": "memberId",
+									"key": "userId",
 									"value": "{{userId}}"
 								}
 							]
@@ -846,46 +747,6 @@
 		{
 			"name": "/lists",
 			"item": [
-				{
-					"name": "Delete List 2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{domain}}/api/lists/:listId",
-							"host": [
-								"{{domain}}"
-							],
-							"path": [
-								"api",
-								"lists",
-								":listId"
-							],
-							"variable": [
-								{
-									"key": "listId",
-									"value": "{{listId2}}"
-								}
-							]
-						},
-						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
-					},
-					"response": []
-				},
 				{
 					"name": "Update List",
 					"event": [
@@ -1084,46 +945,6 @@
 			"name": "/tasks/",
 			"item": [
 				{
-					"name": "Delete Task 2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{domain}}/api/tasks/:taskId",
-							"host": [
-								"{{domain}}"
-							],
-							"path": [
-								"api",
-								"tasks",
-								":taskId"
-							],
-							"variable": [
-								{
-									"key": "taskId",
-									"value": "{{taskId2}}"
-								}
-							]
-						},
-						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
-					},
-					"response": []
-				},
-				{
 					"name": "Get Task Details",
 					"event": [
 						{
@@ -1263,6 +1084,52 @@
 					"response": []
 				},
 				{
+					"name": "Move Task to New List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/tasks/:taskId/lists/:listId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"tasks",
+								":taskId",
+								"lists",
+								":listId"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "{{taskId}}"
+								},
+								{
+									"key": "listId",
+									"value": "{{listId2}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
 					"name": "Assign Member to Task",
 					"event": [
 						{
@@ -1291,7 +1158,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{domain}}/api/tasks/:taskId/member/:memberId",
+							"raw": "{{domain}}/api/tasks/:taskId/users/:userId",
 							"host": [
 								"{{domain}}"
 							],
@@ -1299,8 +1166,8 @@
 								"api",
 								"tasks",
 								":taskId",
-								"member",
-								":memberId"
+								"users",
+								":userId"
 							],
 							"variable": [
 								{
@@ -1308,7 +1175,7 @@
 									"value": "{{taskId}}"
 								},
 								{
-									"key": "memberId",
+									"key": "userId",
 									"value": "{{memberId}}"
 								}
 							]
@@ -1316,9 +1183,14 @@
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "Cleanup",
+			"item": [
 				{
-					"name": "Unassign Member to Task",
+					"name": "Unassign Member from Task",
 					"event": [
 						{
 							"listen": "test",
@@ -1346,7 +1218,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{domain}}/api/tasks/:taskId/member/:memberId",
+							"raw": "{{domain}}/api/tasks/:taskId/users/:userId",
 							"host": [
 								"{{domain}}"
 							],
@@ -1354,8 +1226,8 @@
 								"api",
 								"tasks",
 								":taskId",
-								"member",
-								":memberId"
+								"users",
+								":userId"
 							],
 							"variable": [
 								{
@@ -1363,7 +1235,7 @@
 									"value": "{{taskId}}"
 								},
 								{
-									"key": "memberId",
+									"key": "userId",
 									"value": "{{memberId}}"
 								}
 							]
@@ -1371,12 +1243,182 @@
 						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Cleanup",
-			"item": [
+				},
+				{
+					"name": "Unassign Member from Board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/api/boards/:boardId/users/:userId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"boards",
+								":boardId",
+								"users",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "boardId",
+									"value": "{{boardId}}"
+								},
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Task 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/tasks/:taskId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"tasks",
+								":taskId"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "{{taskId2}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete List 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/lists/:listId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"lists",
+								":listId"
+							],
+							"variable": [
+								{
+									"key": "listId",
+									"value": "{{listId2}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Board 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/api/boards/:boardId",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"boards",
+								":boardId"
+							],
+							"variable": [
+								{
+									"key": "boardId",
+									"value": "{{boardId2}}"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
 				{
 					"name": "Delete Board",
 					"event": [
