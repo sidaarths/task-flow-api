@@ -141,50 +141,49 @@ router.delete('/:boardId', authMiddleware, async (req: Request, res: Response) =
 });
 
 // Add member to board
-router.post('/:boardId/members', authMiddleware, async (req: Request, res: Response) => {
+router.post('/:boardId/users/:userId', authMiddleware, async (req: Request, res: Response) => {
   try {
-    logger.info(`[POST /boards/:boardId/members] Adding member to board ${req.params.boardId}`);
+    logger.info(`[POST /boards/:boardId/users/:userId] Adding member ${req.params.userId} to board ${req.params.boardId}`);
     const board = await Board.findById(req.params.boardId);
     if (!board) {
-      logger.warn(`[POST /boards/:boardId/members] Board ${req.params.boardId} not found`);
+      logger.warn(`[POST /boards/:boardId/users/:userId] Board ${req.params.boardId} not found`);
       return res.status(404).json({ message: 'Board not found' });
     }
 
     if (board.createdBy.toString() !== req.user!.userId.toString()) {
-      logger.warn(`[POST /boards/:boardId/members] Access denied for user ${req.user!.userId} to add members to board ${board._id}`);
+      logger.warn(`[POST /boards/:boardId/users/:userId] Access denied for user ${req.user!.userId} to add members to board ${board._id}`);
       return res.status(403).json({ message: 'Access denied' });
     }
 
-    const { userId } = req.body;
-    const memberId = new mongoose.Types.ObjectId(userId);
+    const memberId = new mongoose.Types.ObjectId(req.params.userId);
     
     if (board.members.some(m => m.toString() === memberId.toString())) {
-      logger.warn(`[POST /boards/:boardId/members] User ${userId} is already a member of board ${board._id}`);
+      logger.warn(`[POST /boards/:boardId/users/:userId] User ${req.params.userId} is already a member of board ${board._id}`);
       return res.status(400).json({ message: 'User is already a member' });
     }
 
     board.members.push(memberId);
     await board.save();
-    logger.info(`[POST /boards/:boardId/members] Successfully added member ${userId} to board ${board._id}`);
+    logger.info(`[POST /boards/:boardId/users/:userId] Successfully added member ${req.params.userId} to board ${board._id}`);
     res.json(board);
   } catch (error) {
-    logger.error(`[POST /boards/:boardId/members] Error adding member:`, error);
+    logger.error(`[POST /boards/:boardId/users/:userId] Error adding member:`, error);
     res.status(400).json({ message: 'Error adding member' });
   }
 });
 
 // Remove member from board
-router.delete('/:boardId/members/:userId', authMiddleware, async (req: Request, res: Response) => {
+router.delete('/:boardId/users/:userId', authMiddleware, async (req: Request, res: Response) => {
   try {
-    logger.info(`[DELETE /boards/:boardId/members/:userId] Removing member ${req.params.userId} from board ${req.params.boardId}`);
+    logger.info(`[DELETE /boards/:boardId/users/:userId] Removing member ${req.params.userId} from board ${req.params.boardId}`);
     const board = await Board.findById(req.params.boardId);
     if (!board) {
-      logger.warn(`[DELETE /boards/:boardId/members/:userId] Board ${req.params.boardId} not found`);
+      logger.warn(`[DELETE /boards/:boardId/users/:userId] Board ${req.params.boardId} not found`);
       return res.status(404).json({ message: 'Board not found' });
     }
 
     if (board.createdBy.toString() !== req.user!.userId.toString()) {
-      logger.warn(`[DELETE /boards/:boardId/members/:userId] Access denied for user ${req.user!.userId} to remove members from board ${board._id}`);
+      logger.warn(`[DELETE /boards/:boardId/users/:userId] Access denied for user ${req.user!.userId} to remove members from board ${board._id}`);
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -192,23 +191,23 @@ router.delete('/:boardId/members/:userId', authMiddleware, async (req: Request, 
     
     // Prevent removing the creator from board members
     if (memberId.toString() === board.createdBy.toString()) {
-      logger.warn(`[DELETE /boards/:boardId/members/:userId] Cannot remove creator from board ${board._id}`);
+      logger.warn(`[DELETE /boards/:boardId/users/:userId] Cannot remove creator from board ${board._id}`);
       return res.status(400).json({ message: 'Cannot remove creator from board' });
     }
 
     const memberIndex = board.members.findIndex(m => m.toString() === memberId.toString());
     
     if (memberIndex === -1) {
-      logger.warn(`[DELETE /boards/:boardId/members/:userId] Member ${req.params.userId} not found in board ${board._id}`);
+      logger.warn(`[DELETE /boards/:boardId/users/:userId] Member ${req.params.userId} not found in board ${board._id}`);
       return res.status(404).json({ message: 'Member not found' });
     }
 
     board.members.splice(memberIndex, 1);
     await board.save();
-    logger.info(`[DELETE /boards/:boardId/members/:userId] Successfully removed member ${req.params.userId} from board ${board._id}`);
+    logger.info(`[DELETE /boards/:boardId/users/:userId] Successfully removed member ${req.params.userId} from board ${board._id}`);
     res.json(board);
   } catch (error) {
-    logger.error(`[DELETE /boards/:boardId/members/:userId] Error removing member:`, error);
+    logger.error(`[DELETE /boards/:boardId/users/:userId] Error removing member:`, error);
     res.status(400).json({ message: 'Error removing member' });
   }
 });
