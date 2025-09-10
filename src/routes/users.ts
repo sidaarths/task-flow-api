@@ -33,12 +33,12 @@ router.get('/me', authMiddleware, async (req: Request, res) => {
 });
 
 // Search users
-router.get('/search', authMiddleware, async (req: Request, res) => {
+router.get('/', authMiddleware, async (req: Request, res) => {
   try {
-    logger.info(`[GET /users/search] Searching users with query: ${req.query.q}`);
-    const searchTerm = req.query.q as string;
+    logger.info(`[GET /users/] Searching users with query: ${req.query.email}`);
+    const searchTerm = req.query.email as string;
     if (!searchTerm) {
-      logger.warn('[GET /users/search] No search term provided');
+      logger.warn('[GET /users/] No search term provided');
       return res.status(400).json({ message: 'Search term is required' });
     }
 
@@ -46,10 +46,10 @@ router.get('/search', authMiddleware, async (req: Request, res) => {
       email: { $regex: searchTerm, $options: 'i' }
     }).select('-password').limit(10);
 
-    logger.info(`[GET /users/search] Found ${users.length} users matching "${searchTerm}"`);
+    logger.info(`[GET /users/] Found ${users.length} users matching "${searchTerm}"`);
     res.json(users);
   } catch (error) {
-    logger.error('[GET /users/search] Error searching users:', error);
+    logger.error('[GET /users/] Error searching users:', error);
     if (error instanceof mongoose.Error.ValidationError) {
       res.status(400).json({ message: 'Invalid search parameters' });
     } else {

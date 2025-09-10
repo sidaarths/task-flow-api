@@ -232,18 +232,17 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{domain}}/api/users/search?q=s",
+							"raw": "{{domain}}/api/users?email=s",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"users",
-								"search"
+								"users"
 							],
 							"query": [
 								{
-									"key": "q",
+									"key": "email",
 									"value": "s"
 								}
 							]
@@ -454,18 +453,17 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{domain}}/api/users/search?q=e",
+							"raw": "{{domain}}/api/users?email=e",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"users",
-								"search"
+								"users"
 							],
 							"query": [
 								{
-									"key": "q",
+									"key": "email",
 									"value": "e"
 								}
 							]
