@@ -58,4 +58,30 @@ router.get('/', authMiddleware, async (req: Request, res) => {
   }
 });
 
+// Get user by ID
+router.get('/:userId', authMiddleware, async (req: Request, res) => {
+  try {
+    const { userId } = req.params;
+    logger.info(`[GET /users/${userId}] Fetching user by ID`);
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      logger.warn(`[GET /users/${userId}] Invalid user ID format`);
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+    const user = await User.findById(userId).select('-password');
+    if (!user) {
+      logger.warn(`[GET /users/${userId}] User not found`);
+      return res.status(404).json({ message: 'User not found' });
+    }
+    logger.info(`[GET /users/${userId}] Successfully fetched user ${user._id}`);
+    res.json(user);
+  } catch (error) {
+    logger.error(`[GET /users/:userId] Error fetching user by ID:`, error);
+    if (error instanceof mongoose.Error.ValidationError) {
+      res.status(400).json({ message: 'Invalid user ID format' });
+    } else {
+      res.status(500).json({ message: 'Error fetching user by ID' });
+    }
+  }
+});
+
 export default router;
