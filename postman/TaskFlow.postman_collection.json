@@ -1,11 +1,11 @@
 {
 	"info": {
-		"_postman_id": "4983e242-ce5e-441c-9359-4ab07ab12cff",
+		"_postman_id": "9e47d88f-f29e-41f5-baa1-c4b3c9e853bc",
 		"name": "TaskFlow",
 		"description": "Welcome! This Collection is used to document and test TaskFlow API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "48090832",
-		"_collection_link": "https://sidaarths-572275.postman.co/workspace/Sid's-Workspace~b3b01952-4c4b-4326-898c-b5ca0241c158/collection/48090832-4983e242-ce5e-441c-9359-4ab07ab12cff?action=share&source=collection_link&creator=48090832"
+		"_collection_link": "https://sidaarths-572275.postman.co/workspace/Sid's-Workspace~b3b01952-4c4b-4326-898c-b5ca0241c158/collection/48090832-9e47d88f-f29e-41f5-baa1-c4b3c9e853bc?action=share&source=collection_link&creator=48090832"
 	},
 	"item": [
 		{
@@ -57,8 +57,7 @@
 								"auth",
 								"login"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -101,8 +100,7 @@
 								"api",
 								"boards"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -153,8 +151,7 @@
 									"value": "{{boardId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -205,8 +202,7 @@
 									"value": "{{listId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -246,8 +242,7 @@
 									"value": "s"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -282,8 +277,7 @@
 								"users",
 								"me"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				}
@@ -352,8 +346,7 @@
 								"auth",
 								"login"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				}
@@ -428,8 +421,7 @@
 								"users",
 								"me"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -468,8 +460,7 @@
 									"value": "{{userId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -507,8 +498,7 @@
 									"value": "e"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				}
@@ -555,8 +545,7 @@
 								"api",
 								"boards"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -588,8 +577,7 @@
 								"api",
 								"boards"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -634,8 +622,7 @@
 									"value": "{{userId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -683,8 +670,7 @@
 									"value": "{{boardId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -723,8 +709,7 @@
 									"value": "{{boardId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -775,8 +760,7 @@
 									"value": "{{boardId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				}
@@ -829,8 +813,7 @@
 									"value": "{{listId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -879,8 +862,7 @@
 									"value": "{{listId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -920,8 +902,7 @@
 									"value": "{{listId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -972,8 +953,7 @@
 									"value": "{{listId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				}
@@ -1017,8 +997,7 @@
 									"value": "{{taskId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1066,8 +1045,7 @@
 									"value": "{{taskId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1092,7 +1070,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n   \"position\": 0\r\n}",
+							"raw": "{\r\n   \"position\": 0,\r\n   \"listId\": \"{{listId2}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1116,54 +1094,7 @@
 									"value": "{{taskId}}"
 								}
 							]
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "Move Task to New List",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
 						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "{{domain}}/api/tasks/:taskId/lists/:listId",
-							"host": [
-								"{{domain}}"
-							],
-							"path": [
-								"api",
-								"tasks",
-								":taskId",
-								"lists",
-								":listId"
-							],
-							"variable": [
-								{
-									"key": "taskId",
-									"value": "{{taskId}}"
-								},
-								{
-									"key": "listId",
-									"value": "{{listId2}}"
-								}
-							]
-						},
-						"description": ""
 					},
 					"response": []
 				},
@@ -1217,8 +1148,7 @@
 									"value": "{{memberId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				}
@@ -1277,8 +1207,7 @@
 									"value": "{{memberId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1332,8 +1261,7 @@
 									"value": "{{userId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1372,8 +1300,7 @@
 									"value": "{{taskId2}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1412,8 +1339,7 @@
 									"value": "{{listId2}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1452,8 +1378,7 @@
 									"value": "{{boardId2}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1494,8 +1419,7 @@
 									"value": "{{boardId}}"
 								}
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				}
