@@ -31,12 +31,7 @@ interface BoardMemberChangedData {
 let io: SocketIOServer | null = null;
 
 export const initializeSocket = (server: HTTPServer): SocketIOServer => {
-  io = new SocketIOServer(server, {
-    cors: {
-      methods: ['GET', 'POST'],
-      credentials: true,
-    },
-  });
+  io = new SocketIOServer(server);
 
   // Authentication middleware
   io.use((socket: Socket, next) => {
