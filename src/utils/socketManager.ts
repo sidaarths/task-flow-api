@@ -33,7 +33,6 @@ let io: SocketIOServer | null = null;
 export const initializeSocket = (server: HTTPServer): SocketIOServer => {
   io = new SocketIOServer(server, {
     cors: {
-      origin: process.env.CLIENT_URL || 'http://localhost:3000',
       methods: ['GET', 'POST'],
       credentials: true,
     },
