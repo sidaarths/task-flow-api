@@ -1,7 +1,9 @@
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { Server as HTTPServer } from 'http';
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 import logger from './logger';
+import { Board } from '../models/Board';
 
 let io: SocketIOServer | null = null;
 
@@ -38,10 +40,44 @@ export const initializeSocket = (server: HTTPServer): SocketIOServer => {
     const userId = socket.data.userId;
     logger.info(`[Socket] Client connected: ${socket.id}, User: ${userId}`);
 
-    // Join board room
-    socket.on('join-board', (boardId: string) => {
-      socket.join(`board:${boardId}`);
-      logger.info(`[Socket] User ${userId} joined board:${boardId}`);
+    // Join board room with authorization check
+    socket.on('join-board', async (boardId: string) => {
+      try {
+        // Validate boardId format
+        if (!mongoose.Types.ObjectId.isValid(boardId)) {
+          logger.warn(`[Socket] Invalid boardId format: ${boardId}, User: ${userId}`);
+          socket.emit('error', { message: 'Invalid board ID format' });
+          return;
+        }
+
+        // Check if user has access to the board
+        const board = await Board.findById(boardId);
+        
+        if (!board) {
+          logger.warn(`[Socket] Board not found: ${boardId}, User: ${userId}`);
+          socket.emit('error', { message: 'Board not found' });
+          return;
+        }
+
+        // Check if user is the creator or a member
+        const userObjectId = new mongoose.Types.ObjectId(userId);
+        const isCreator = board.createdBy.toString() === userObjectId.toString();
+        const isMember = board.members.some(memberId => memberId.toString() === userObjectId.toString());
+
+        if (!isCreator && !isMember) {
+          logger.warn(`[Socket] Access denied: User ${userId} attempted to join board:${boardId}`);
+          socket.emit('error', { message: 'Access denied: You are not a member of this board' });
+          return;
+        }
+
+        // Authorization successful - join the room
+        socket.join(`board:${boardId}`);
+        logger.info(`[Socket] User ${userId} joined board:${boardId} (authorized)`);
+        socket.emit('joined-board', { boardId });
+      } catch (error) {
+        logger.error(`[Socket] Error joining board:`, error);
+        socket.emit('error', { message: 'Failed to join board' });
+      }
     });
 
     // Leave board room
