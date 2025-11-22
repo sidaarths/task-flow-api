@@ -3,7 +3,30 @@ import { Server as HTTPServer } from 'http';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import logger from './logger';
-import { Board } from '../models/Board';
+import { Board, IBoard } from '../models/Board';
+import { IList } from '../models/List';
+import { ITask } from '../models/Task';
+
+// Socket event data types
+interface SocketErrorData {
+  message: string;
+}
+
+interface JoinedBoardData {
+  boardId: string;
+}
+
+interface ListDeletedData {
+  listId: string;
+}
+
+interface TaskDeletedData {
+  taskId: string;
+}
+
+interface BoardMemberChangedData {
+  userId: string;
+}
 
 let io: SocketIOServer | null = null;
 
@@ -46,16 +69,16 @@ export const initializeSocket = (server: HTTPServer): SocketIOServer => {
         // Validate boardId format
         if (!mongoose.Types.ObjectId.isValid(boardId)) {
           logger.warn(`[Socket] Invalid boardId format: ${boardId}, User: ${userId}`);
-          socket.emit('error', { message: 'Invalid board ID format' });
+          socket.emit('error', { message: 'Invalid board ID format' } as SocketErrorData);
           return;
         }
 
         // Check if user has access to the board
-        const board = await Board.findById(boardId);
+        const board: IBoard | null = await Board.findById(boardId);
         
         if (!board) {
           logger.warn(`[Socket] Board not found: ${boardId}, User: ${userId}`);
-          socket.emit('error', { message: 'Board not found' });
+          socket.emit('error', { message: 'Board not found' } as SocketErrorData);
           return;
         }
 
@@ -66,17 +89,17 @@ export const initializeSocket = (server: HTTPServer): SocketIOServer => {
 
         if (!isCreator && !isMember) {
           logger.warn(`[Socket] Access denied: User ${userId} attempted to join board:${boardId}`);
-          socket.emit('error', { message: 'Access denied: You are not a member of this board' });
+          socket.emit('error', { message: 'Access denied: You are not a member of this board' } as SocketErrorData);
           return;
         }
 
         // Authorization successful - join the room
         socket.join(`board:${boardId}`);
         logger.info(`[Socket] User ${userId} joined board:${boardId} (authorized)`);
-        socket.emit('joined-board', { boardId });
+        socket.emit('joined-board', { boardId } as JoinedBoardData);
       } catch (error) {
         logger.error(`[Socket] Error joining board:`, error);
-        socket.emit('error', { message: 'Failed to join board' });
+        socket.emit('error', { message: 'Failed to join board' } as SocketErrorData);
       }
     });
 
@@ -103,45 +126,45 @@ export const getIO = (): SocketIOServer => {
 };
 
 // Helper functions to emit events to board rooms
-export const emitToBoardRoom = (boardId: string, event: string, data: any) => {
+export const emitToBoardRoom = (boardId: string, event: string, data: unknown): void => {
   if (io) {
     io.to(`board:${boardId}`).emit(event, data);
     logger.info(`[Socket] Emitted ${event} to board:${boardId}`, { data });
   }
 };
 
-export const emitListCreated = (boardId: string, list: any) => {
+export const emitListCreated = (boardId: string, list: IList): void => {
   emitToBoardRoom(boardId, 'list:created', list);
 };
 
-export const emitListUpdated = (boardId: string, list: any) => {
+export const emitListUpdated = (boardId: string, list: IList): void => {
   emitToBoardRoom(boardId, 'list:updated', list);
 };
 
-export const emitListDeleted = (boardId: string, listId: string) => {
-  emitToBoardRoom(boardId, 'list:deleted', { listId });
+export const emitListDeleted = (boardId: string, listId: string): void => {
+  emitToBoardRoom(boardId, 'list:deleted', { listId } as ListDeletedData);
 };
 
-export const emitTaskCreated = (boardId: string, task: any) => {
+export const emitTaskCreated = (boardId: string, task: ITask): void => {
   emitToBoardRoom(boardId, 'task:created', task);
 };
 
-export const emitTaskUpdated = (boardId: string, task: any) => {
+export const emitTaskUpdated = (boardId: string, task: ITask): void => {
   emitToBoardRoom(boardId, 'task:updated', task);
 };
 
-export const emitTaskDeleted = (boardId: string, taskId: string) => {
-  emitToBoardRoom(boardId, 'task:deleted', { taskId });
+export const emitTaskDeleted = (boardId: string, taskId: string): void => {
+  emitToBoardRoom(boardId, 'task:deleted', { taskId } as TaskDeletedData);
 };
 
-export const emitBoardUpdated = (boardId: string, board: any) => {
+export const emitBoardUpdated = (boardId: string, board: IBoard): void => {
   emitToBoardRoom(boardId, 'board:updated', board);
 };
 
-export const emitBoardMemberAdded = (boardId: string, userId: string) => {
-  emitToBoardRoom(boardId, 'board:member-added', { userId });
+export const emitBoardMemberAdded = (boardId: string, userId: string): void => {
+  emitToBoardRoom(boardId, 'board:member-added', { userId } as BoardMemberChangedData);
 };
 
-export const emitBoardMemberRemoved = (boardId: string, userId: string) => {
-  emitToBoardRoom(boardId, 'board:member-removed', { userId });
+export const emitBoardMemberRemoved = (boardId: string, userId: string): void => {
+  emitToBoardRoom(boardId, 'board:member-removed', { userId } as BoardMemberChangedData);
 };
