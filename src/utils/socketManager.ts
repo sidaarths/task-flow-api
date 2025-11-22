@@ -6,6 +6,10 @@ import { ITask } from '../models/Task';
 
 let pusher: Pusher | null = null;
 
+// Helper function to generate channel name consistently
+const getChannelName = (boardId: string): string => `private-board-${boardId}`;
+
+// Initialize Pusher
 export const initializePusher = (): Pusher => {
   if (pusher) {
     return pusher;
@@ -17,7 +21,7 @@ export const initializePusher = (): Pusher => {
   const cluster = process.env.PUSHER_CLUSTER || 'us2';
 
   if (!appId || !key || !secret) {
-    logger.error('[Pusher] Missing required environment variables (PUSHER_APP_ID, PUSHER_KEY, PUSHER_SECRET)');
+    logger.error('[Pusher] Missing required environment variables');
     throw new Error('Pusher configuration error: Missing environment variables');
   }
 
@@ -29,10 +33,11 @@ export const initializePusher = (): Pusher => {
     useTLS: true,
   });
 
-  logger.info('[Pusher] Pusher initialized successfully');
+  logger.info('[Pusher] Initialized successfully');
   return pusher;
 };
 
+// Get Pusher instance
 export const getPusher = (): Pusher => {
   if (!pusher) {
     throw new Error('Pusher not initialized. Call initializePusher first.');
@@ -40,17 +45,19 @@ export const getPusher = (): Pusher => {
   return pusher;
 };
 
-// Helper functions to emit events to board channels
+// Trigger event on board channel
 const triggerBoardEvent = (boardId: string, event: string, data: unknown): void => {
   try {
     const pusherInstance = getPusher();
-    pusherInstance.trigger(`private-board-${boardId}`, event, data);
-    logger.info(`[Pusher] Triggered ${event} on board-${boardId}`, { data });
+    const channelName = getChannelName(boardId);
+    pusherInstance.trigger(channelName, event, data);
+    logger.info(`[Pusher] Triggered ${event} on ${channelName}`, { data });
   } catch (error) {
     logger.error(`[Pusher] Error triggering ${event} on board-${boardId}:`, error);
   }
 };
 
+// List events
 export const emitListCreated = (boardId: string, list: IList): void => {
   triggerBoardEvent(boardId, 'list:created', list);
 };
@@ -63,6 +70,7 @@ export const emitListDeleted = (boardId: string, listId: string): void => {
   triggerBoardEvent(boardId, 'list:deleted', { listId });
 };
 
+// Task events
 export const emitTaskCreated = (boardId: string, task: ITask): void => {
   triggerBoardEvent(boardId, 'task:created', task);
 };
@@ -75,6 +83,7 @@ export const emitTaskDeleted = (boardId: string, taskId: string): void => {
   triggerBoardEvent(boardId, 'task:deleted', { taskId });
 };
 
+// Board events
 export const emitBoardUpdated = (boardId: string, board: IBoard): void => {
   triggerBoardEvent(boardId, 'board:updated', board);
 };
