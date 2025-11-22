@@ -42,14 +42,20 @@ export const initializeSocket = (server: HTTPServer): SocketIOServer => {
   // Authentication middleware
   io.use((socket: Socket, next) => {
     const token = socket.handshake.auth.token;
+    const jwtSecret = process.env.JWT_SECRET;
     
     if (!token) {
       logger.warn('[Socket] Connection rejected: No token provided');
       return next(new Error('Authentication error: No token provided'));
     }
+    
+    if (!jwtSecret) {
+      logger.error('[Socket] JWT_SECRET is not defined');
+      return next(new Error('Server configuration error'));
+    }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
+      const decoded = jwt.verify(token, jwtSecret) as { userId: string };
       socket.data.userId = decoded.userId;
       logger.info(`[Socket] User ${decoded.userId} authenticated`);
       next();
@@ -127,10 +133,12 @@ export const getIO = (): SocketIOServer => {
 
 // Helper functions to emit events to board rooms
 export const emitToBoardRoom = (boardId: string, event: string, data: unknown): void => {
-  if (io) {
-    io.to(`board:${boardId}`).emit(event, data);
-    logger.info(`[Socket] Emitted ${event} to board:${boardId}`, { data });
+  if (!io) {
+    logger.warn(`[Socket] Attempted to emit ${event} to board:${boardId} but Socket.IO not initialized`);
+    return;
   }
+  io.to(`board:${boardId}`).emit(event, data);
+  logger.info(`[Socket] Emitted ${event} to board:${boardId}`, { data });
 };
 
 export const emitListCreated = (boardId: string, list: IList): void => {

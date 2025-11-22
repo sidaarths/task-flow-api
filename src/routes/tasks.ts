@@ -321,11 +321,10 @@ router.put('/:taskId/position', authMiddleware, async (req: Request, res: Respon
 
     logger.info(`[PUT /tasks/:taskId/position] Successfully updated position for task ${task._id} to ${position} in list ${targetList._id}`);
     
-    // Emit socket event - get updated task
-    const updatedTask = await Task.findById(task._id);
-    if (updatedTask) {
-      emitTaskUpdated(board._id!.toString(), updatedTask);
-    }
+    // Emit socket event
+    task.position = position;
+    task.listId = targetList._id as any;
+    emitTaskUpdated(board._id!.toString(), task);
     
     res.json({ message: 'Task position updated successfully' });
   } catch (error) {
