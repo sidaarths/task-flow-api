@@ -30,8 +30,50 @@ interface BoardMemberChangedData {
 
 let io: SocketIOServer | null = null;
 
+// CORS configuration for Socket.IO
+const getAllowedOrigins = (): string[] => {
+  const origins = [
+    'http://localhost:3000',
+    'https://task-flow-web-tawny.vercel.app',
+  ];
+
+  // Add custom origin from environment variable if provided
+  if (process.env.CLIENT_URL) {
+    origins.push(process.env.CLIENT_URL);
+  }
+
+  return origins;
+};
+
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    const allowedOrigins = getAllowedOrigins();
+    
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    // Check if the origin is allowed
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } 
+    // Allow task-flow-web Vercel deployments
+    else if (origin.match(/^https:\/\/task-flow-web.*\.vercel\.app$/)) {
+      callback(null, true);
+    } 
+    else {
+      logger.warn(`[Socket] Blocked CORS request from origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST'],
+  credentials: true,
+};
+
 export const initializeSocket = (server: HTTPServer): SocketIOServer => {
-  io = new SocketIOServer(server);
+  io = new SocketIOServer(server, {
+    cors: corsOptions,
+  });
 
   // Authentication middleware
   io.use((socket: Socket, next) => {
