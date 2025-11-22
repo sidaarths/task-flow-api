@@ -2,10 +2,9 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import { createServer } from 'http';
 import apiRoutes from './routes/api';
 import logger from './utils/logger';
-import { initializeSocket } from './utils/socketManager';
+import { initializePusher } from './utils/socketManager';
 
 dotenv.config();
 
@@ -60,6 +59,7 @@ const corsOptions = {
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI!)
@@ -69,11 +69,17 @@ mongoose.connect(process.env.MONGODB_URI!)
 // Routes
 app.use('/api', apiRoutes);
 
-// Create HTTP server and initialize Socket.IO
-const server = createServer(app);
-initializeSocket(server);
+// Initialize Pusher
+try {
+  initializePusher();
+  logger.info('Pusher initialized successfully');
+} catch (error) {
+  logger.error('Failed to initialize Pusher:', error);
+  process.exit(1);
+}
 
-server.listen(port, () => {
+// Start server
+app.listen(port, () => {
   logger.info(`Server is running on port ${port}`);
-  logger.info(`Socket.IO is ready for connections`);
+  logger.info(`Pusher is ready for real-time events`);
 });
