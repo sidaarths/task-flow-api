@@ -64,13 +64,9 @@ router.post('/auth', authMiddleware, async (req: Request, res: Response): Promis
       return;
     }
 
-    // User is authorized - generate auth signature
     const pusher = getPusher();
-    const presenceData = {
-      user_id: userId.toString(),
-    };
 
-    const auth = pusher.authorizeChannel(socketId, channelName, presenceData);
+    const auth = pusher.authorizeChannel(socketId, channelName);
     
     logger.info(`[Pusher Auth] User ${userId} authorized for channel: ${channelName}`);
     res.json(auth);
