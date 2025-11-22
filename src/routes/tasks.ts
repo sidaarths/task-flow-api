@@ -5,6 +5,7 @@ import { List, IList } from '../models/List';
 import { Board, IBoard } from '../models/Board';
 import mongoose from 'mongoose';
 import logger from '../utils/logger';
+import { emitTaskUpdated, emitTaskDeleted } from '../utils/socketManager';
 
 const router = express.Router({ mergeParams: true });
 
@@ -53,6 +54,10 @@ router.post('/:taskId/users/:userId', authMiddleware, async (req: Request, res: 
     task.assignedTo.push(assigneeId);
     await task.save();
     logger.info(`[POST /tasks/:taskId/users/:userId] Successfully assigned member ${req.params.userId} to task ${task._id}`);
+    
+    // Emit socket event
+    emitTaskUpdated(board._id!.toString(), task);
+    
     res.json(task);
   } catch (error) {
     logger.error(`[POST /tasks/:taskId/users/:userId] Error assigning user to task:`, error);
@@ -99,6 +104,10 @@ router.delete('/:taskId/users/:userId', authMiddleware, async (req: Request, res
     task.assignedTo.splice(assigneeIndex, 1);
     await task.save();
     logger.info(`[DELETE /tasks/:taskId/users/:userId] Successfully unassigned user ${req.params.userId} from task ${task._id}`);
+    
+    // Emit socket event
+    emitTaskUpdated(board._id!.toString(), task);
+    
     res.json(task);
   } catch (error) {
     logger.error(`[DELETE /tasks/:taskId/users/:userId] Error unassigning user from task:`, error);
@@ -188,6 +197,12 @@ router.put('/:taskId', authMiddleware, async (req: Request, res: Response) => {
       { new: true }
     );
     logger.info(`[PUT /tasks/:taskId] Successfully updated task ${updatedTask?._id}`);
+    
+    // Emit socket event
+    if (updatedTask) {
+      emitTaskUpdated(board._id!.toString(), updatedTask);
+    }
+    
     res.json(updatedTask);
   } catch (error) {
     logger.error(`[PUT /tasks/:taskId] Error updating task:`, error);
@@ -229,6 +244,10 @@ router.delete('/:taskId', authMiddleware, async (req: Request, res: Response) =>
 
     await task.deleteOne();
     logger.info(`[DELETE /tasks/:taskId] Successfully deleted task ${task._id}`);
+    
+    // Emit socket event
+    emitTaskDeleted(board._id!.toString(), req.params.taskId);
+    
     res.json({ message: 'Task deleted successfully' });
   } catch (error) {
     logger.error(`[DELETE /tasks/:taskId] Error deleting task:`, error);
@@ -301,6 +320,13 @@ router.put('/:taskId/position', authMiddleware, async (req: Request, res: Respon
     }));
 
     logger.info(`[PUT /tasks/:taskId/position] Successfully updated position for task ${task._id} to ${position} in list ${targetList._id}`);
+    
+    // Emit socket event - get updated task
+    const updatedTask = await Task.findById(task._id);
+    if (updatedTask) {
+      emitTaskUpdated(board._id!.toString(), updatedTask);
+    }
+    
     res.json({ message: 'Task position updated successfully' });
   } catch (error) {
     logger.error(`[PUT /tasks/:taskId/position] Error updating task position:`, error);
