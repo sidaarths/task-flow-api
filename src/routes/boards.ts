@@ -5,6 +5,7 @@ import { Task } from '../models/Task';
 import { authMiddleware } from '../middleware/auth';
 import mongoose from 'mongoose';
 import logger from '../utils/logger';
+import { emitBoardUpdated, emitBoardMemberAdded, emitBoardMemberRemoved, emitListCreated } from '../utils/socketManager';
 
 const router = express.Router();
 
@@ -100,6 +101,12 @@ router.put('/:boardId', authMiddleware, async (req: Request, res: Response) => {
       { new: true }
     );
     logger.info(`[PUT /boards/:boardId] Successfully updated board ${updatedBoard?._id}`);
+    
+    // Emit socket event
+    if (updatedBoard) {
+      emitBoardUpdated(req.params.boardId, updatedBoard);
+    }
+    
     res.json(updatedBoard);
   } catch (error) {
     logger.error(`[PUT /boards/:boardId] Error updating board:`, error);
@@ -165,6 +172,10 @@ router.post('/:boardId/users/:userId', authMiddleware, async (req: Request, res:
     board.members.push(memberId);
     await board.save();
     logger.info(`[POST /boards/:boardId/users/:userId] Successfully added member ${req.params.userId} to board ${board._id}`);
+    
+    // Emit socket event
+    emitBoardMemberAdded(req.params.boardId, req.params.userId);
+    
     res.json(board);
   } catch (error) {
     logger.error(`[POST /boards/:boardId/users/:userId] Error adding member:`, error);
@@ -205,6 +216,10 @@ router.delete('/:boardId/users/:userId', authMiddleware, async (req: Request, re
     board.members.splice(memberIndex, 1);
     await board.save();
     logger.info(`[DELETE /boards/:boardId/users/:userId] Successfully removed member ${req.params.userId} from board ${board._id}`);
+    
+    // Emit socket event
+    emitBoardMemberRemoved(req.params.boardId, req.params.userId);
+    
     res.json(board);
   } catch (error) {
     logger.error(`[DELETE /boards/:boardId/users/:userId] Error removing member:`, error);
@@ -240,6 +255,10 @@ router.post('/:boardId/lists', authMiddleware, async (req: Request, res: Respons
 
     await list.save();
     logger.info(`[POST /boards/:boardId/lists] Successfully created list ${list._id} in board ${board._id}`);
+    
+    // Emit socket event
+    emitListCreated(req.params.boardId, list);
+    
     res.status(201).json(list);
   } catch (error) {
     logger.error(`[POST /boards/:boardId/lists] Error creating list:`, error);

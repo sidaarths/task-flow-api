@@ -5,6 +5,7 @@ import { Task } from '../models/Task';
 import { Board, IBoard } from '../models/Board';
 import mongoose from 'mongoose';
 import logger from '../utils/logger';
+import { emitListUpdated, emitListDeleted, emitTaskCreated } from '../utils/socketManager';
 
 const router = express.Router({ mergeParams: true });
 
@@ -43,6 +44,12 @@ router.put('/:listId', authMiddleware, async (req: Request, res: Response) => {
       { new: true }
     );
     logger.info(`[PUT /lists/:listId] Successfully updated list ${updatedList?._id}`);
+    
+    // Emit socket event
+    if (updatedList) {
+      emitListUpdated(list.boardId.toString(), updatedList);
+    }
+    
     res.json(updatedList);
     
   } catch (error) {
@@ -83,6 +90,10 @@ router.delete('/:listId', authMiddleware, async (req: Request, res: Response) =>
     await list.deleteOne();
 
     logger.info(`[DELETE /lists/:listId] Successfully deleted list ${list._id} and ${deletedTasks.deletedCount} tasks`);
+    
+    // Emit socket event
+    emitListDeleted(list.boardId.toString(), req.params.listId);
+    
     res.json({ message: 'List deleted successfully' });
   } catch (error) {
     logger.error(`[DELETE /lists/:listId] Error deleting list:`, error);
@@ -214,6 +225,10 @@ router.post('/:listId/tasks', authMiddleware, async (req: Request, res: Response
 
     await task.save();
     logger.info(`[POST /lists/:listId/tasks] Successfully created task ${task._id} in list ${list._id}`);
+    
+    // Emit socket event
+    emitTaskCreated(list.boardId.toString(), task);
+    
     res.status(201).json(task);
   } catch (error) {
     logger.error(`[POST /lists/:listId/tasks] Error creating task:`, error);
