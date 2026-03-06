@@ -4,7 +4,7 @@ import listsRouter from './lists';
 import tasksRouter from './tasks';
 import authRouter from './auth';
 import usersRouter from './users';
-import pusherRouter from './pusher';
+import sseRouter from './sse';
 
 const router = express.Router();
 
@@ -13,6 +13,6 @@ router.use('/users', usersRouter);
 router.use('/boards', boardsRouter);
 router.use('/lists', listsRouter);
 router.use('/tasks', tasksRouter);
-router.use('/pusher', pusherRouter);
+router.use('/sse', sseRouter);
 
 export default router;
