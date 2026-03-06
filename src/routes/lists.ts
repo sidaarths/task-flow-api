@@ -1,16 +1,18 @@
 import express, { Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth';
+import { validate } from '../middleware/validate';
+import { updateListSchema, updateListPositionSchema, createTaskInListSchema } from '../schemas/list.schemas';
 import { List, IList } from '../models/List';
 import { Task } from '../models/Task';
 import { Board, IBoard } from '../models/Board';
 import mongoose from 'mongoose';
 import logger from '../utils/logger';
-import { emitListUpdated, emitListDeleted, emitTaskCreated } from '../utils/socketManager';
+import { emitListUpdated, emitListDeleted, emitTaskCreated, emitListReordered } from '../utils/sseManager';
 
 const router = express.Router({ mergeParams: true });
 
 // Update list
-router.put('/:listId', authMiddleware, async (req: Request, res: Response) => {
+router.put('/:listId', authMiddleware, validate(updateListSchema), async (req: Request, res: Response) => {
   try {
     logger.info(`[PUT /lists/:listId] Updating list ${req.params.listId}`);
     const list = await List.findById(req.params.listId);
@@ -102,14 +104,10 @@ router.delete('/:listId', authMiddleware, async (req: Request, res: Response) =>
 });
 
 // Update list position
-router.put('/:listId/position', authMiddleware, async (req: Request, res: Response) => {
+router.put('/:listId/position', authMiddleware, validate(updateListPositionSchema), async (req: Request, res: Response) => {
   try {
     logger.info(`[PUT /lists/:listId/position] Updating position for list ${req.params.listId} to ${req.body.position}`);
     const { position } = req.body;
-    if (typeof position !== 'number') {
-      logger.warn(`[PUT /lists/:listId/position] Invalid position value provided: ${position}`);
-      return res.status(400).json({ message: 'Invalid position value' });
-    }
 
     const list = await List.findById(req.params.listId) as IList;
     if (!list) {
@@ -153,6 +151,13 @@ router.put('/:listId/position', authMiddleware, async (req: Request, res: Respon
     }));
 
     logger.info(`[PUT /lists/:listId/position] Successfully updated position for list ${list._id} to ${position}`);
+
+    // Broadcast new order to all board clients
+    emitListReordered(
+      board._id!.toString(),
+      lists.map((l, index) => ({ _id: l._id!.toString(), position: index }))
+    );
+
     res.json({ message: 'List position updated successfully' });
   } catch (error) {
     logger.error(`[PUT /lists/:listId/position] Error updating list position:`, error);
@@ -192,7 +197,7 @@ router.get('/:listId/tasks', authMiddleware, async (req: Request, res: Response)
 });
 
 // Create new task
-router.post('/:listId/tasks', authMiddleware, async (req: Request, res: Response) => {
+router.post('/:listId/tasks', authMiddleware, validate(createTaskInListSchema), async (req: Request, res: Response) => {
   try {
     logger.info(`[POST /lists/:listId/tasks] Creating new task in list ${req.params.listId}`);
     const list = await List.findById(req.params.listId) as IList;

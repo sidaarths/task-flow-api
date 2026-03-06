@@ -1,11 +1,13 @@
 import express, { Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth';
+import { validate } from '../middleware/validate';
+import { updateTaskSchema, updateTaskPositionSchema } from '../schemas/task.schemas';
 import { Task, ITask } from '../models/Task';
 import { List, IList } from '../models/List';
 import { Board, IBoard } from '../models/Board';
 import mongoose from 'mongoose';
 import logger from '../utils/logger';
-import { emitTaskUpdated, emitTaskDeleted } from '../utils/socketManager';
+import { emitTaskUpdated, emitTaskDeleted, emitTaskReordered } from '../utils/sseManager';
 
 const router = express.Router({ mergeParams: true });
 
@@ -152,7 +154,7 @@ router.get('/:taskId', authMiddleware, async (req: Request, res: Response) => {
 });
 
 // Update task
-router.put('/:taskId', authMiddleware, async (req: Request, res: Response) => {
+router.put('/:taskId', authMiddleware, validate(updateTaskSchema), async (req: Request, res: Response) => {
   try {
     logger.info(`[PUT /tasks/:taskId] Updating task ${req.params.taskId}`);
     const task = await Task.findById(req.params.taskId) as ITask;
@@ -256,7 +258,7 @@ router.delete('/:taskId', authMiddleware, async (req: Request, res: Response) =>
 });
 
 // Update task position
-router.put('/:taskId/position', authMiddleware, async (req: Request, res: Response) => {
+router.put('/:taskId/position', authMiddleware, validate(updateTaskPositionSchema), async (req: Request, res: Response) => {
   try {
     const { listId, position } = req.body;
     logger.info(`[PUT /tasks/:taskId/position] Updating position for task ${req.params.taskId} to position ${position}${listId ? ` in list ${listId}` : ''}`);
@@ -320,12 +322,22 @@ router.put('/:taskId/position', authMiddleware, async (req: Request, res: Respon
     }));
 
     logger.info(`[PUT /tasks/:taskId/position] Successfully updated position for task ${task._id} to ${position} in list ${targetList._id}`);
-    
-    // Emit socket event
-    task.position = position;
-    task.listId = targetList._id as any;
-    emitTaskUpdated(board._id!.toString(), task);
-    
+
+    // Fetch all tasks in affected lists to broadcast full updated order
+    const affectedListIds = [sourceList._id!.toString()];
+    if (targetList._id!.toString() !== sourceList._id!.toString()) {
+      affectedListIds.push(targetList._id!.toString());
+    }
+    const affectedTasks = await Task.find({ listId: { $in: affectedListIds } }).sort('position');
+    emitTaskReordered(
+      board._id!.toString(),
+      affectedTasks.map((t) => ({
+        _id: t._id!.toString(),
+        position: t.position,
+        listId: t.listId.toString(),
+      }))
+    );
+
     res.json({ message: 'Task position updated successfully' });
   } catch (error) {
     logger.error(`[PUT /tasks/:taskId/position] Error updating task position:`, error);

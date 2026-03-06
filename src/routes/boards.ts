@@ -2,10 +2,13 @@ import express, { Request, Response } from 'express';
 import { Board } from '../models/Board';
 import { List } from '../models/List';
 import { Task } from '../models/Task';
+import { User } from '../models/User';
 import { authMiddleware } from '../middleware/auth';
+import { validate } from '../middleware/validate';
+import { createBoardSchema, updateBoardSchema, createListInBoardSchema } from '../schemas/board.schemas';
 import mongoose from 'mongoose';
 import logger from '../utils/logger';
-import { emitBoardUpdated, emitBoardMemberAdded, emitBoardMemberRemoved, emitListCreated } from '../utils/socketManager';
+import { emitBoardUpdated, emitBoardMemberAdded, emitBoardMemberRemoved, emitListCreated } from '../utils/sseManager';
 
 const router = express.Router();
 
@@ -28,7 +31,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
 });
 
 // Create new board
-router.post('/', authMiddleware, async (req: Request, res: Response) => {
+router.post('/', authMiddleware, validate(createBoardSchema), async (req: Request, res: Response) => {
   try {
     logger.info(`[POST /boards] Creating new board for user ${req.user!.userId}`);
     const board = new Board({
@@ -67,12 +70,17 @@ router.get('/:boardId', authMiddleware, async (req: Request, res: Response) => {
 
     const lists = await List.find({ boardId: board._id }).sort('position');
     const tasks = await Task.find({ listId: { $in: lists.map(list => list._id) } }).sort('position');
+    const memberDetails = await User.find(
+      { _id: { $in: board.members } },
+      { _id: 1, email: 1, createdAt: 1, updatedAt: 1 }
+    ).lean();
 
     logger.info(`[GET /boards/:boardId] Successfully fetched board ${board._id} with ${lists.length} lists and ${tasks.length} tasks`);
     res.json({
       board,
       lists,
-      tasks
+      tasks,
+      memberDetails,
     });
   } catch (error) {
     logger.error(`[GET /boards/:boardId] Error fetching board details:`, error);
@@ -81,7 +89,7 @@ router.get('/:boardId', authMiddleware, async (req: Request, res: Response) => {
 });
 
 // Update board details
-router.put('/:boardId', authMiddleware, async (req: Request, res: Response) => {
+router.put('/:boardId', authMiddleware, validate(updateBoardSchema), async (req: Request, res: Response) => {
   try {
     logger.info(`[PUT /boards/:boardId] Updating board ${req.params.boardId} for user ${req.user!.userId}`);
     const board = await Board.findById(req.params.boardId);
@@ -228,7 +236,7 @@ router.delete('/:boardId/users/:userId', authMiddleware, async (req: Request, re
 });
 
 // Create new list
-router.post('/:boardId/lists', authMiddleware, async (req: Request, res: Response) => {
+router.post('/:boardId/lists', authMiddleware, validate(createListInBoardSchema), async (req: Request, res: Response) => {
   try {
     logger.info(`[POST /boards/:boardId/lists] Creating new list in board ${req.params.boardId}`);
     const board = await Board.findById(req.params.boardId);

@@ -1,36 +1,25 @@
 import winston from 'winston';
 
-// Define log levels
-const levels = {
-  error: 0,
-  warn: 1,
-  info: 2,
-  debug: 3,
-};
-
-const level = () => {
-  const env = process.env.NODE_ENV || 'development';
-  return env === 'development' ? 'debug' : 'info';
-};
-
-// Define custom format
-const format = winston.format.combine(
-  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
-  winston.format.printf(
-    (info) => `${info.timestamp} ${info.level}: ${info.message}`
-  )
-);
-
-// Create the logger
-const transports = [
-  new winston.transports.Console(),
-];
+const levels = { error: 0, warn: 1, info: 2, debug: 3 };
 
 const logger = winston.createLogger({
-  level: level(),
+  level: process.env.LOG_LEVEL || (process.env.NODE_ENV === 'development' ? 'debug' : 'info'),
   levels,
-  format,
-  transports,
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.errors({ stack: true }),
+    process.env.NODE_ENV === 'production'
+      ? winston.format.json()
+      : winston.format.combine(
+          winston.format.colorize(),
+          winston.format.printf(({ timestamp, level, message, ...meta }) => {
+            const metaStr = Object.keys(meta).length ? ` ${JSON.stringify(meta)}` : '';
+            return `${timestamp} ${level}: ${message}${metaStr}`;
+          })
+        )
+  ),
+  transports: [new winston.transports.Console()],
+  silent: process.env.NODE_ENV === 'test',
 });
 
 export default logger;
