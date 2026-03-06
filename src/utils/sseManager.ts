@@ -12,6 +12,10 @@ interface SSEClient {
 }
 
 // boardId -> Set of connected clients
+// NOTE: This Map lives in a single Node.js process. Horizontal scaling (multiple
+// instances) will break SSE delivery — clients on instance A won't receive events
+// emitted by instance B. Keep numInstances=1 on Render, or replace with Redis pub/sub
+// before scaling out.
 const sseClients = new Map<string, Set<SSEClient>>();
 
 export const addSSEClient = (boardId: string, client: SSEClient): void => {
@@ -54,10 +58,12 @@ const broadcastToBoardClients = (boardId: string, event: string, data: unknown):
     }
   });
 
+  // Capture count before removing dead clients so the log reflects actual recipients
+  const successCount = clients.size - deadClients.length;
   deadClients.forEach((c) => removeSSEClient(boardId, c));
 
-  if (clients.size > 0) {
-    logger.debug(`[SSE] Broadcast "${event}" to ${clients.size} client(s) on board ${boardId}`);
+  if (successCount > 0) {
+    logger.debug(`[SSE] Broadcast "${event}" to ${successCount} client(s) on board ${boardId}`);
   }
 };
 

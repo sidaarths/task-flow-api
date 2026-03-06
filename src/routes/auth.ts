@@ -28,41 +28,50 @@ const getCredentials = (req: Request): { email: string; password: string } | nul
 
 const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-router.post('/register', async (req: Request, res: Response) => {
-  const credentials = getCredentials(req);
-  if (!credentials) {
-    return res.status(401).json({ message: 'Missing or invalid Basic Auth header', hint: 'Use Basic Authentication with email:password encoded in base64' });
+router.post('/register', async (req: Request, res: Response, next) => {
+  try {
+    const credentials = getCredentials(req);
+    if (!credentials) {
+      return res.status(401).json({ message: 'Missing or invalid Basic Auth header', hint: 'Use Basic Authentication with email:password encoded in base64' });
+    }
+    const { email, password } = credentials;
+    if (!isValidEmail(email)) return res.status(400).json({ message: 'Invalid email format' });
+    if (password.length < 6) return res.status(400).json({ message: 'Password must be at least 6 characters' });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ message: 'User with this email already exists' });
+    const user = new User({ email, password });
+    await user.save();
+    const token = jwt.sign({ userId: user._id }, env.JWT_SECRET, { expiresIn: '24h' });
+    logger.info(`[POST /auth/register] Registered user ${user._id}`);
+    res.status(201).json({ token });
+  } catch (err) {
+    next(err);
   }
-  const { email, password } = credentials;
-  if (!isValidEmail(email)) return res.status(400).json({ message: 'Invalid email format' });
-  if (password.length < 6) return res.status(400).json({ message: 'Password must be at least 6 characters' });
-  const existingUser = await User.findOne({ email });
-  if (existingUser) return res.status(400).json({ message: 'User with this email already exists' });
-  const user = new User({ email, password });
-  await user.save();
-  const token = jwt.sign({ userId: user._id }, env.JWT_SECRET, { expiresIn: '24h' });
-  logger.info(`[POST /auth/register] Registered user ${user._id}`);
-  res.status(201).json({ token });
 });
 
-router.post('/login', async (req: Request, res: Response) => {
-  const credentials = getCredentials(req);
-  if (!credentials) {
-    return res.status(401).json({ message: 'Missing or invalid Basic Auth header', hint: 'Use Basic Authentication with email:password encoded in base64' });
+router.post('/login', async (req: Request, res: Response, next) => {
+  try {
+    const credentials = getCredentials(req);
+    if (!credentials) {
+      return res.status(401).json({ message: 'Missing or invalid Basic Auth header', hint: 'Use Basic Authentication with email:password encoded in base64' });
+    }
+    const { email, password } = credentials;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+    const isValid = await user.comparePassword(password);
+    if (!isValid) return res.status(401).json({ message: 'Invalid credentials' });
+    const token = jwt.sign({ userId: user._id }, env.JWT_SECRET, { expiresIn: '24h' });
+    logger.info(`[POST /auth/login] Logged in user ${user._id}`);
+    res.json({ token });
+  } catch (err) {
+    next(err);
   }
-  const { email, password } = credentials;
-  const user = await User.findOne({ email });
-  if (!user) return res.status(401).json({ message: 'Invalid credentials' });
-  const isValid = await user.comparePassword(password);
-  if (!isValid) return res.status(401).json({ message: 'Invalid credentials' });
-  const token = jwt.sign({ userId: user._id }, env.JWT_SECRET, { expiresIn: '24h' });
-  logger.info(`[POST /auth/login] Logged in user ${user._id}`);
-  res.json({ token });
 });
 
 // Creates an isolated demo account with pre-populated sample data.
 // Each call produces a unique user so demos don't share state.
-router.post('/demo', async (_req: Request, res: Response) => {
+router.post('/demo', async (_req: Request, res: Response, next) => {
+  try {
   const suffix = randomBytes(5).toString('hex');
   const email = `demo_${suffix}@taskflow.demo`;
   const password = randomBytes(16).toString('hex');
@@ -150,6 +159,9 @@ router.post('/demo', async (_req: Request, res: Response) => {
   const token = jwt.sign({ userId: user._id }, env.JWT_SECRET, { expiresIn: '24h' });
   logger.info(`[POST /auth/demo] Created demo user ${user._id}`);
   res.status(201).json({ token, boardId: board._id });
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;

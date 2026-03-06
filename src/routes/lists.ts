@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth';
 import { validate } from '../middleware/validate';
-import { updateListSchema } from '../schemas/list.schemas';
+import { updateListSchema, updateListPositionSchema, createTaskInListSchema } from '../schemas/list.schemas';
 import { List, IList } from '../models/List';
 import { Task } from '../models/Task';
 import { Board, IBoard } from '../models/Board';
@@ -104,14 +104,10 @@ router.delete('/:listId', authMiddleware, async (req: Request, res: Response) =>
 });
 
 // Update list position
-router.put('/:listId/position', authMiddleware, async (req: Request, res: Response) => {
+router.put('/:listId/position', authMiddleware, validate(updateListPositionSchema), async (req: Request, res: Response) => {
   try {
     logger.info(`[PUT /lists/:listId/position] Updating position for list ${req.params.listId} to ${req.body.position}`);
     const { position } = req.body;
-    if (typeof position !== 'number') {
-      logger.warn(`[PUT /lists/:listId/position] Invalid position value provided: ${position}`);
-      return res.status(400).json({ message: 'Invalid position value' });
-    }
 
     const list = await List.findById(req.params.listId) as IList;
     if (!list) {
@@ -201,7 +197,7 @@ router.get('/:listId/tasks', authMiddleware, async (req: Request, res: Response)
 });
 
 // Create new task
-router.post('/:listId/tasks', authMiddleware, async (req: Request, res: Response) => {
+router.post('/:listId/tasks', authMiddleware, validate(createTaskInListSchema), async (req: Request, res: Response) => {
   try {
     logger.info(`[POST /lists/:listId/tasks] Creating new task in list ${req.params.listId}`);
     const list = await List.findById(req.params.listId) as IList;

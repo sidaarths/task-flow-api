@@ -40,12 +40,17 @@ router.get('/boards/:boardId', async (req: Request, res: Response) => {
   }
 
   // 3. Verify user is a board member
-  const board = await Board.findById(boardId);
+  let board;
+  try {
+    board = await Board.findById(boardId);
+  } catch (err) {
+    return res.status(500).json({ message: 'Database error' });
+  }
+
   if (!board) {
     return res.status(404).json({ message: 'Board not found' });
   }
 
-  const userObjectId = new mongoose.Types.ObjectId(userId);
   const isMember =
     board.members.some((m) => m.toString() === userId) ||
     board.createdBy.toString() === userId;

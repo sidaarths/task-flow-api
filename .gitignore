@@ -1,5 +1,7 @@
 node_modules
 .vercel
-.envcoverage/
+.env
+dist/
+coverage/
 dev.log
 *.log
